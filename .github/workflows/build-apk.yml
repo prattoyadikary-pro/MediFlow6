@@ -22,18 +22,17 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
 
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses || true
 
-      - name: Install Android SDK
+      - name: Check Gradle wrapper
         run: |
-          sdkmanager "platform-tools"
-          sdkmanager "platforms;android-36"
-          sdkmanager "build-tools;36.0.0"
-
-      - name: Make Gradle executable
-        run: chmod +x gradlew
+          ls -la
+          test -f gradlew || (echo "ERROR: gradlew is missing!" && exit 1)
+          chmod +x gradlew
 
       - name: Build APK
         run: ./gradlew assembleDebug --no-daemon
